@@ -1,0 +1,13 @@
+gymnasium
+stable-baselines3[extra]
+matplotlib
+numpy
+mujoco
+opencv-python
+tensorboard
+pillow
+torch
+moviepy==1.0.3
+pyopengl
+glfw
+watchdog
