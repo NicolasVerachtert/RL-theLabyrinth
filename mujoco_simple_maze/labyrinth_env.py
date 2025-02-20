@@ -26,9 +26,10 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
         self.step_number = 0
 
         self.prev_distance = None
+        self.succes = 0
 
         MujocoEnv.__init__(self, observation_space=self.observation_space,
-                           model_path="./mujoco_plane/resources/mjc_plane.xml", camera_name="top_view",
+                           model_path="./mujoco_simple_maze/resources/mjc_simple_maze.xml", camera_name="top_view",
                            frame_skip=5, **kwargs)
 
         site_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "sensor_plate_site")  # Get site ID
@@ -141,6 +142,8 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
 
         done = bool(self._is_done())
         truncated = self.step_number >= self.episode_length
+        if done:
+            self.succes += 1
         return obs, reward, done, truncated, {}
 
     def reset_model(self):
@@ -155,7 +158,7 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
         ball_start = 2
         # Randomize qpos for the ball
         qpos[ball_start:] = self.init_qpos[ball_start:] + self.np_random.uniform(
-            size=qpos[ball_start:].shape, low=-0.01, high=0.3
+            size=qpos[ball_start:].shape, low=-0.01, high=0.15
         )
         # Optionally, you can randomize the ball's velocities as well:
         qvel[ball_start:] = self.np_random.uniform(

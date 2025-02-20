@@ -13,24 +13,34 @@ class TensorboardCallback(BaseCallback):
     Custom callback for plotting additional values in tensorboard.
     """
 
-    def __init__(self, eval_env: gym.Env, render_freq: int, n_eval_episodes: int = 1, deterministic: bool = True,
-                 verbose=0, log_video: bool = False):
+    def __init__(self, eval_env: gym.Env, 
+                 render_freq: int,
+                 log_video: bool = False,
+                 n_eval_episodes: int = 1,
+                 deterministic: bool = True,
+                 log_interval = 4,
+                 verbose = 0):
         super().__init__(verbose)
         self._eval_env = eval_env
         self._render_freq = render_freq
         self._n_eval_episodes = n_eval_episodes
         self._deterministic = deterministic
+        self._log_interval = log_interval
         self._log_video = log_video
 
     def _on_step(self) -> bool:
-        
+
         # Average Distance
         env = self.training_env
         distance = env.env_method("_compute_distance")
         ep_distance_mean = np.mean(distance)
         self.logger.record('trajectory/avg_distance', ep_distance_mean)
+
+        # Success Rate
+        successes = env.get_attr("succes")[0]
+        self.logger.record('eval/success_rate', (successes / self._log_interval) * 100)
         
-        
+        # Log video
         if self._log_video and self.n_calls % self._render_freq == 0:
             screens = []
 

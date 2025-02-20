@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.INFO)
 
 
 def view():
-    xml_path = "./mujoco_plane/resources/mjc_plane.xml"
+    xml_path = "./mujoco_simple_maze/resources/mjc_simple_maze.xml"
 
     model = mujoco.MjModel.from_xml_path(xml_path)
     data = mujoco.MjData(model)
