@@ -32,9 +32,10 @@ To set up the development environment using DevContainers, ensure you have the f
 This script serves as an entry point to launch different reinforcement learning (RL) projects and their actions.
 
 ### Features
-- Select an RL project (currently supports `mujoco_plane`, `mujoco_simple_maze`).
+- Select an RL project (currently supports `mujoco_plane`, `mujoco_simple_maze`, `mujoco_complex_maze`).
 - Choose an action (`train`, `evaluate`, or `view`).
 - Optionally specify an RL algorithm (e.g., SAC, PPO). This depends on the RL project. See below.
+- Optionally specify an environment variant. This depends on the RL project. See below.
 - Dynamically imports the selected RL module and executes the corresponding function.
 - Loads configuration from an `.env` file.
 
@@ -42,22 +43,27 @@ This script serves as an entry point to launch different reinforcement learning 
 #### Running the Launcher
 Execute the script using:
 ```sh
-python main.py --project <project> --action <action> --model-name <model_name> [--algorithm <algorithm>]
-python main.py -p <project> -a <action> -mn <model_name> [-alg <algorithm>]
+python main.py --project <project> --action <action> --model-name <model_name> [--algorithm <algorithm>] [--environment <environment>]
+python main.py -p <project> -a <action> -mn <model_name> [-alg <algorithm>] [-env <environment>]
 ```
 
 #### Available Options
-| Argument             | Values                                       | Description                                                              |
-|----------------------|----------------------------------------------|--------------------------------------------------------------------------|
-| `-p`,`--project`     | `mujoco_plane`, `mujoco_simple_maze`         | The RL project module to use.                                            |
-| `-a`,`--action`      | `train`, `evaluate`, `view`                  | The action to perform in the RL project.                                 |
-| `-alg`,`--algorithm` | TBD                                          | The RL algorithm to use. If not specified, the module's default is used. |
-| `-mn`,`--model-name` | Model name (required for train and evaluate) | The name of the model to use.                                            |
+| Argument               | Values                                                                                                                                      | Description                                               |
+|------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------|
+| `-p`,`--project`       | `mujoco_plane`, `mujoco_simple_maze`, `mujoco_complex_maze`                                                                                 | The RL project module to use.                             |
+| `-a`,`--action`        | `train`, `evaluate`, `view`                                                                                                                 | The action to perform in the RL project.                  |
+| `-mn`,`--model-name`   | Model name (required for train and evaluate)                                                                                                | The name of the model to use.                             |
+| `-alg`,`--algorithm`   | `SAC`, `PPO`                                                                                                                                | The RL algorithm to use. Required in mujoco_complex_maze. |
+| `-env`,`--environment` | `intermediate_rewards`, `no_intermediate_rewards`, `no_intermediate_rewards_with_time_penalty`, `no_intermediate_rewards_with_velocity_obs` | The env variant to use. Required in mujoco_complex_maze.  |
+
 
 ### Example Commands
 - **Training**:
   ```sh
   python main.py --project mujoco_plane --action train --model-name my_model
+  ```
+  ```sh
+  python main.py --project mujoco_complex_maze --action train --model-name my_model --algorithm SAC --environment intermediate_rewards
   ```
 - **Evaluation**:
   ```sh
@@ -90,12 +96,8 @@ This will be automatically done when running inside a devContainer.
 ### Mujoco Plane
 ![mujoco plane screenshot](./screenshots/screenshot_mujoco_plane.png)
 
-- Algorithm Used: SAC
-
-
 ### Mujoco Simple Maze
-![mujoco plane screenshot](./screenshots/screenshot_mujoco_simple_maze.png)
+![mujoco simple maze screenshot](./screenshots/screenshot_mujoco_simple_maze.png)
 
-- Algorithm Used: SAC
-
-
+### Mujoco Complex Maze
+![mujoco complex maze screenshot](./screenshots/screenshot_mujoco_complex_maze.png)

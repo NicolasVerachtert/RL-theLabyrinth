@@ -20,7 +20,7 @@ def main():
     # Initialize argument parser
     parser = argparse.ArgumentParser(description="RL Project Launcher")
     parser.add_argument(
-        "-p", "--project", choices=["mujoco_plane", "mujoco_simple_maze"], required=True,
+        "-p", "--project", choices=["mujoco_plane", "mujoco_simple_maze", "mujoco_complex_maze"], required=True,
         help="Specify the RL project version"
     )
     parser.add_argument(
@@ -30,6 +30,10 @@ def main():
     parser.add_argument(
         "-alg", "--algorithm", default=None,
         help="Specify the RL algorithm (e.g., SAC, PPO). If not specified, the module's default will be used."
+    )
+    parser.add_argument(
+        "-env", "--environment", default=None,
+        help="Specify the environment variant. If not specified, the module's default will be used."
     )
     parser.add_argument(
         "-mn", "--model-name", required=False,
@@ -43,27 +47,32 @@ def main():
         logger.error("Error: Model name must be specified when using 'train' or 'evaluate'.")
         return
 
+    # Ensure algorithm and environment variant are provided for training in the complex maze
+    if args.action == "train" and args.project == "mujoco_complex_maze" and (not args.environment or not args.algorithm):
+        logger.error("Error: When training in Mujoco Complex Maze, you must specify the RL algorithm (e.g., SAC, PPO) and the environment variant.")
+        return
+
     # Attempt to import the specified project module
     try:
         project_module = importlib.import_module(args.project)
-    except ModuleNotFoundError:
-        logger.error(f"Error: Project '{args.project}' not found.")
+    except ModuleNotFoundError as e:
+        logger.error(f"Error: Project '{args.project}' not found.: {e}")
         return
-
-    # Determine function name based on algorithm
-    function_name = args.action if args.algorithm is None else f"{args.action}_{args.algorithm}"
 
     # Retrieve the function dynamically
     try:
-        selected_function = getattr(project_module, function_name)
+        selected_function = getattr(project_module, args.action)
         if args.model_name:
-            selected_function(model_name=args.model_name)
+            selected_function(
+                model_name = args.model_name,
+                env_variant = args.environment, 
+                algorithm = args.algorithm)
         else:
             selected_function()
     except AttributeError:
-        logger.error(f"Error: Function '{function_name}' not found in project '{args.project}'.")
+        logger.error(f"Error: Function '{args.action}' not found in project '{args.project}'.")
     except Exception as e:
-        logger.error(f"Error executing function '{function_name}': {e}")
+        logger.error(f"Error executing function '{args.action}': {e}")
 
 if __name__ == "__main__":
     main()

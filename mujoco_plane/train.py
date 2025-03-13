@@ -13,7 +13,7 @@ from mujoco_plane.tensorboard_integration import TensorboardCallback
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-def train(model_name: str):
+def train(model_name: str, **kwargs):
     """
     Train a reinforcement learning model using Soft Actor-Critic (SAC) in a custom Labyrinth environment.
     """
