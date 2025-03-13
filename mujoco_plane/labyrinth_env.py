@@ -29,7 +29,7 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
 
         MujocoEnv.__init__(self, observation_space=self.observation_space,
                            model_path="./mujoco_plane/resources/mjc_plane.xml", camera_name="top_view",
-                           frame_skip=5, **kwargs)
+                           frame_skip=1, **kwargs)
 
         site_id = mujoco.mj_name2id(self.model, mujoco.mjtObj.mjOBJ_SITE, "sensor_plate_site")  # Get site ID
         self.goal_pos = self.model.site_pos[site_id, :2]  # Extract (x, y) position
