@@ -26,5 +26,7 @@ COPY . .
 # Set root as the default user
 USER root
 
+ENV MUJOCO_GL=egl
+
 # Define the default command
 CMD ["/bin/bash"]

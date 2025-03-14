@@ -34,18 +34,21 @@ class TensorboardCallback(BaseCallback):
        This will add the average distance to the goal to the tensorboard log.
        It will also add a video of the evaluation environment to the tensorboard log every `render_freq` calls.
        """
-        
+        print("step: ", self.n_calls)
         env = self.training_env
         distances = env.env_method("_compute_distances")
         distances = [d[0] for d in distances]
         ep_distance_mean = np.mean(distances)
+        print("ep_distance_mean", ep_distance_mean)
         self.logger.record('trajectory/avg_distance', ep_distance_mean)
 
         successes = env.get_attr("succes")[0]
         self.logger.record('eval/success_rate', (successes / self._log_interval) * 100)
+        print('eval/success_rate', (successes / self._log_interval) * 100)
 
 
         if self._log_video and self.n_calls % self._render_freq == 0:
+            print("saving video")
             screens = []
 
             def grab_screens(_locals: Dict[str, Any], _globals: Dict[str, Any]) -> None:

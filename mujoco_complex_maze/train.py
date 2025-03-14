@@ -11,7 +11,7 @@ import logging
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-def train_algorithm(model_name: str, env_variant: str, algorithm, total_steps: int, checkpoint_interval: int, episode_length: int, n_envs: int, log_interval: int):
+def train_algorithm(model_name: str, env_variant: str, algorithm, total_steps: int, checkpoint_interval: int, episode_length: int, n_envs: int, log_interval: int, render_freq: int):
     """
     Train a reinforcement learning model using the specified algorithm in a custom Labyrinth environment.
     :param model_name: Name of the model
@@ -47,8 +47,8 @@ def train_algorithm(model_name: str, env_variant: str, algorithm, total_steps: i
 
     tensor_callback = TensorboardCallback(
         log_env,
-        render_freq=episode_length,
-        log_interval=20,
+        render_freq=render_freq,
+        log_interval=1,
         log_video=True
     )
 
@@ -77,11 +77,12 @@ def train(model_name: str, env_variant: str, algorithm: str):
     config = {
         "SAC": {
             "algorithm": SAC,
-            "total_steps": 10_000_000,
-            "checkpoint_interval": 1_000_000,
+            "total_steps": 20_000,
+            "checkpoint_interval": 10_000,
             "episode_length": 4_000,
-            "n_envs": 6,
-            "log_interval": 10_000
+            "n_envs": 2,
+            "log_interval": 1,
+            "render_freq": 5_000
         },
         "PPO": {
             "algorithm": PPO,
@@ -89,7 +90,8 @@ def train(model_name: str, env_variant: str, algorithm: str):
             "checkpoint_interval": 1_000_000,
             "episode_length": 4_000,
             "n_envs": 6,
-            "log_interval": 10_000
+            "log_interval": 50,
+            "render_freq": 5_000
         }
     }
 

@@ -10,5 +10,6 @@ torch
 moviepy==1.0.3
 pyopengl
 PyOpenGL-accelerate
+pyautogui
 glfw
 dotenv
