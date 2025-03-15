@@ -24,7 +24,7 @@ def main():
         help="Specify the RL project version"
     )
     parser.add_argument(
-        "-a", "--action", choices=["train", "evaluate", "view"], required=True,
+        "-a", "--action", choices=["train", "evaluate", "view", "demo"], required=True,
         help="Specify the action: train, evaluate, or view"
     )
     parser.add_argument(
@@ -47,8 +47,8 @@ def main():
         logger.error("Error: Model name must be specified when using 'train' or 'evaluate'.")
         return
 
-    # Ensure algorithm and environment variant are provided for training in the complex maze
-    if args.action == "train" and args.project == "mujoco_complex_maze" and (not args.environment or not args.algorithm):
+    # Ensure algorithm and environment variant are provided for training or demo in the complex maze
+    if args.action in ["train", "demo"] and args.project == "mujoco_complex_maze" and (not args.environment or not args.algorithm):
         logger.error("Error: When training in Mujoco Complex Maze, you must specify the RL algorithm (e.g., SAC, PPO) and the environment variant.")
         return
 

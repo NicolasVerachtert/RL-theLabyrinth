@@ -3,7 +3,6 @@ from typing import Optional
 import cv2
 import mujoco
 import numpy as np
-import pyautogui
 from gymnasium import utils, spaces
 from gymnasium.envs.mujoco import MujocoEnv
 from numpy._typing import NDArray
@@ -48,6 +47,11 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
         self.tot_reward = 0
         self.demo = demo
         self.obs = True
+
+        if self.demo:
+            self.pyautogui = importlib.import_module('pyautogui')
+        else:
+            self.pyautogui = None
 
     def _get_obs(self):
         return {
@@ -206,6 +210,7 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
 
     def render(self):
         frame = super().render()
+
         if self.evaluation_vid and not self.obs:
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
@@ -228,11 +233,12 @@ class LabyrinthEnv(MujocoEnv, utils.EzPickle):
                 cv2.putText(new_frame, f"Distance: {tot_distance:.4f}", (10, 120),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
             frame = cv2.cvtColor(new_frame, cv2.COLOR_BGR2RGB)
+
         if self.demo and not self.obs:
             demo_frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
             # Get screen resolution
-            screen_width, screen_height = pyautogui.size()
+            screen_width, screen_height = self.pyautogui.size()
             h, w = demo_frame.shape[:2]
 
             # Scale while maintaining aspect ratio
