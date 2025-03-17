@@ -90,10 +90,10 @@ def train(model_name: str, env_variant: str, algorithm: str):
         "SAC": {
             "algorithm": SAC,
             "total_steps": 10_000_000,
-            "checkpoint_interval": 10_000,
+            "checkpoint_interval": 1_000_000,
             "episode_length": 4_000,
-            "n_envs": 15,
-            "log_interval": 1,
+            "n_envs": 30,
+            "log_interval": 30,
             "render_freq": 5_000,
             "evaluation_vid": False,
             "demo": False
