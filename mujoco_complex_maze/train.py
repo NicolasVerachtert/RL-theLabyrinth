@@ -4,9 +4,12 @@ from stable_baselines3 import SAC, PPO
 from stable_baselines3.common.env_util import make_vec_env
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import CheckpointCallback
+from stable_baselines3.common.vec_env import SubprocVecEnv
+
 from mujoco_complex_maze.tensorboard_integration import TensorboardCallback # Assuming this is a custom callback
 import config as cfg  # Configuration file
 import logging
+import torch as th
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -24,6 +27,13 @@ def train_algorithm(model_name: str, env_variant: str, algorithm: str, total_ste
     :param log_interval: Logging interval in steps
     """
     RENDER_MODE = "rgb_array"
+
+    logger.info(f"Max CPU threads: {os.cpu_count()}")
+    logger.info(f"Max Torch threads: {th.get_num_threads()}")
+    th.set_num_threads(os.cpu_count())
+    logger.info(f"Max Torch threads after adjustment: {th.get_num_threads()}")
+    
+    
     
 
     module = importlib.import_module(f"mujoco_complex_maze.labyrinth_env_{env_variant}")
@@ -32,7 +42,8 @@ def train_algorithm(model_name: str, env_variant: str, algorithm: str, total_ste
     vec_env = make_vec_env(
         LabyrinthEnv,
         n_envs=n_envs,
-        env_kwargs={"episode_length": episode_length, "render_mode": RENDER_MODE, "evaluation_vid": evaluation_vid, "demo": demo}
+        env_kwargs={"episode_length": episode_length, "render_mode": RENDER_MODE, "evaluation_vid": evaluation_vid, "demo": demo},
+        vec_env_cls=SubprocVecEnv,
     )
 
     log_env = LabyrinthEnv(episode_length=episode_length, render_mode=RENDER_MODE, evaluation_vid=evaluation_vid, demo=demo)
@@ -78,10 +89,10 @@ def train(model_name: str, env_variant: str, algorithm: str):
     config = {
         "SAC": {
             "algorithm": SAC,
-            "total_steps": 20_000,
+            "total_steps": 10_000_000,
             "checkpoint_interval": 10_000,
             "episode_length": 4_000,
-            "n_envs": 2,
+            "n_envs": 15,
             "log_interval": 1,
             "render_freq": 5_000,
             "evaluation_vid": False,

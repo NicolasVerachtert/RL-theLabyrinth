@@ -14,8 +14,10 @@ COPY requirements.txt .
 # Install minimal system dependencies and clean up afterward
 RUN --mount=type=cache,target=/var/cache/apt \
     apt update && \
-    apt install -y --no-install-recommends libsdl2-dev libosmesa6 libopengl0 && \
-    rm -rf /var/lib/apt/lists/*
+    apt install -y --no-install-recommends \
+    libsdl2-dev libosmesa6 libopengl0 \
+    libglu1-mesa libglu1-mesa-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies without caching to reduce image size
 RUN --mount=type=cache,target=/root/.cache/pip \
