@@ -1,5 +1,8 @@
+.git
+.idea
 .cadence
 .devcontainer
+__pycache__
 screenshots
 output/models
 output/tensorboard

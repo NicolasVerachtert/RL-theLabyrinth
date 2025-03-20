@@ -2,8 +2,8 @@
 FROM mcr.microsoft.com/devcontainers/python:3.11
 
 # Set environment variables
-ENV MUJOCO_GL=osmesa
-ENV DISPLAY=:0
+ENV MUJOCO_GL=egl
+# ENV DISPLAY=:0
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -12,12 +12,16 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install minimal system dependencies and clean up afterward
-RUN apt update && \
-    apt install -y --no-install-recommends libsdl2-dev libosmesa6 && \
-    rm -rf /var/lib/apt/lists/*
+RUN --mount=type=cache,target=/var/cache/apt \
+    apt update && \
+    apt install -y --no-install-recommends \
+    libsdl2-dev libosmesa6 libopengl0 \
+    libglu1-mesa libglu1-mesa-dev \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install Python dependencies without caching to reduce image size
-RUN pip install --upgrade pip && \
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
 # Copy the rest of the project files
